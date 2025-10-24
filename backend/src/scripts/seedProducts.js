@@ -164,7 +164,12 @@ function transformProduct(customProduct, categories) {
         isPrimary: true
       }
     ],
-    stock: Math.floor(Math.random() * 50) + 20, // Random stock between 20-70
+    inventory: {
+      trackQuantity: false, // Don't track stock for proof of concept
+      quantity: 999, // Always in stock
+      lowStockThreshold: 5,
+      allowBackorder: false
+    },
     sku: `CUSTOM-${customProduct.name.replace(/[^A-Z0-9]/g, '').substring(0, 8)}`,
     status: 'active',
     featured: Math.random() > 0.6, // 40% chance of being featured

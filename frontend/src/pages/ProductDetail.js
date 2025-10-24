@@ -27,13 +27,7 @@ const ProductDetail = () => {
   const product = data;
 
   const handleAddToCart = () => {
-    if (!isAuthenticated) {
-      toast.error('Please login to add items to cart');
-      navigate('/login', { state: { from: { pathname: `/products/${id}` } } });
-      return;
-    }
-
-    if (!product.inventory?.trackQuantity ? product.inventory?.quantity > 0 : true) {
+    if (product.inventory?.trackQuantity && product.inventory?.quantity <= 0) {
       toast.error('This product is out of stock');
       return;
     }
@@ -50,13 +44,7 @@ const ProductDetail = () => {
   };
 
   const handleBuyNow = () => {
-    if (!isAuthenticated) {
-      toast.error('Please login to purchase');
-      navigate('/login', { state: { from: { pathname: `/products/${id}` } } });
-      return;
-    }
-
-    if (!product.inventory?.trackQuantity ? product.inventory?.quantity > 0 : true) {
+    if (product.inventory?.trackQuantity && product.inventory?.quantity <= 0) {
       toast.error('This product is out of stock');
       return;
     }
@@ -290,7 +278,7 @@ const ProductDetail = () => {
               <div className="flex space-x-4">
                 <button
                   onClick={handleAddToCart}
-                  disabled={!product.inventory?.trackQuantity ? product.inventory?.quantity > 0 : true}
+                  disabled={product.inventory?.trackQuantity && product.inventory?.quantity <= 0}
                   className="flex-1 flex items-center justify-center space-x-2 bg-black text-white px-6 py-3 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 >
                   <FiShoppingCart className="h-5 w-5" />
@@ -298,7 +286,7 @@ const ProductDetail = () => {
                 </button>
                 <button
                   onClick={handleBuyNow}
-                  disabled={!product.inventory?.trackQuantity ? product.inventory?.quantity > 0 : true}
+                  disabled={product.inventory?.trackQuantity && product.inventory?.quantity <= 0}
                   className="flex-1 bg-primary-600 text-white px-6 py-3 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 >
                   Buy Now

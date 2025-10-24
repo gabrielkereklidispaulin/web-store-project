@@ -30,11 +30,6 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
-    if (!isAuthenticated) {
-      toast.error('Please login to proceed to checkout');
-      navigate('/login', { state: { from: { pathname: '/checkout' } } });
-      return;
-    }
     navigate('/checkout');
   };
 

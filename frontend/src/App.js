@@ -57,16 +57,8 @@ function App() {
                       <Profile />
                     </ProtectedRoute>
                   } />
-                  <Route path="/cart" element={
-                    <ProtectedRoute>
-                      <Cart />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/checkout" element={
-                    <ProtectedRoute>
-                      <Checkout />
-                    </ProtectedRoute>
-                  } />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/checkout" element={<Checkout />} />
                   
                   {/* Admin Routes */}
                   <Route path="/admin/*" element={
