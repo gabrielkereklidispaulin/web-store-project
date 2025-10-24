@@ -237,11 +237,26 @@ const Products = () => {
                   {products.map((product) => (
                     <div key={product._id} className={`group ${viewMode === 'list' ? 'flex' : ''}`}>
                       <Link to={`/products/${product._id}`} className={viewMode === 'list' ? 'flex w-full' : ''}>
-                        <div className={`${viewMode === 'list' ? 'w-64 h-48' : 'aspect-w-1 aspect-h-1'} mb-6`}>
+                        <div className="mb-6" style={{ 
+                          width: viewMode === 'list' ? '256px' : '100%', 
+                          height: viewMode === 'list' ? '192px' : '320px', 
+                          backgroundColor: '#f5f5f5',
+                          border: '2px solid #ddd'
+                        }}>
                           <img
                             src={product.images?.[0]?.url || '/placeholder-image.jpg'}
                             alt={product.name}
-                            className={`${viewMode === 'list' ? 'w-full h-full' : 'w-full h-80'} object-cover group-hover:opacity-80 transition-opacity duration-200`}
+                            style={{ 
+                              width: '100%', 
+                              height: '100%', 
+                              objectFit: 'cover',
+                              display: 'block'
+                            }}
+                            onError={(e) => {
+                              console.log('Image failed to load:', product.images?.[0]?.url);
+                              e.target.style.display = 'none';
+                            }}
+                            onLoad={() => console.log('Image loaded successfully:', product.images?.[0]?.url)}
                           />
                         </div>
                         <div className={`${viewMode === 'list' ? 'flex-1 ml-8' : 'text-center'}`}>
@@ -249,11 +264,11 @@ const Products = () => {
                           <p className="text-sm text-primary-600 mb-4 font-light">{product.shortDescription}</p>
                           <div className={`flex items-center ${viewMode === 'list' ? 'justify-start' : 'justify-center'} space-x-2`}>
                             <span className="text-lg font-light text-black">
-                              ${product.price.toFixed(2)}
+                              {product.price} SEK
                             </span>
                             {product.comparePrice && (
                               <span className="text-sm text-primary-400 line-through">
-                                ${product.comparePrice.toFixed(2)}
+                                {product.comparePrice} SEK
                               </span>
                             )}
                           </div>

@@ -7,7 +7,7 @@ import { FiShoppingBag, FiTruck, FiShield, FiHeadphones } from 'react-icons/fi';
 const Home = () => {
   const { data: featuredProducts, isLoading } = useQuery(
     'featured-products',
-    () => productsAPI.getProducts({ featured: true, limit: 8 }).then(res => res.data),
+    () => productsAPI.getProducts({ limit: 8 }).then(res => res.data),
     {
       select: (data) => data.data.products,
     }
@@ -70,8 +70,8 @@ const Home = () => {
       <section className="py-24 bg-white">
         <div className="max-w-8xl mx-auto px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-light text-black mb-6 tracking-tight">Featured Collection</h2>
-            <p className="text-primary-600 font-light">Handpicked products for discerning tastes</p>
+            <h2 className="text-3xl md:text-4xl font-light text-black mb-6 tracking-tight">Our Collection</h2>
+            <p className="text-primary-600 font-light">Carefully curated products for every style</p>
           </div>
 
           {isLoading ? (
@@ -89,11 +89,21 @@ const Home = () => {
               {featuredProducts?.map((product) => (
                 <div key={product._id} className="group">
                   <Link to={`/products/${product._id}`}>
-                    <div className="aspect-w-1 aspect-h-1 mb-6">
+                    <div className="mb-6" style={{ width: '100%', height: '320px', backgroundColor: '#f5f5f5', border: '2px solid #ddd' }}>
                       <img
                         src={product.images?.[0]?.url || '/placeholder-image.jpg'}
                         alt={product.name}
-                        className="w-full h-80 object-cover group-hover:opacity-80 transition-opacity duration-200"
+                        style={{ 
+                          width: '100%', 
+                          height: '100%', 
+                          objectFit: 'cover',
+                          display: 'block'
+                        }}
+                        onError={(e) => {
+                          console.log('Image failed to load:', product.images?.[0]?.url);
+                          e.target.style.display = 'none';
+                        }}
+                        onLoad={() => console.log('Image loaded successfully:', product.images?.[0]?.url)}
                       />
                     </div>
                     <div className="text-center">
@@ -101,11 +111,11 @@ const Home = () => {
                       <p className="text-sm text-primary-600 mb-4 font-light">{product.shortDescription}</p>
                       <div className="flex items-center justify-center space-x-2">
                         <span className="text-lg font-light text-black">
-                          ${product.price.toFixed(2)}
+                          {product.price} SEK
                         </span>
                         {product.comparePrice && (
                           <span className="text-sm text-primary-400 line-through">
-                            ${product.comparePrice.toFixed(2)}
+                            {product.comparePrice} SEK
                           </span>
                         )}
                       </div>
