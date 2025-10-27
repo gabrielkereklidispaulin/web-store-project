@@ -190,4 +190,84 @@ router.post('/refresh', authenticate, async (req, res) => {
   }
 });
 
+// @route   PUT /api/auth/profile
+// @desc    Update user profile
+// @access  Private
+router.put('/profile', authenticate, [
+  body('firstName').optional().trim().notEmpty().withMessage('First name cannot be empty'),
+  body('lastName').optional().trim().notEmpty().withMessage('Last name cannot be empty'),
+  body('email').optional().isEmail().normalizeEmail().withMessage('Please provide a valid email'),
+  body('phone').optional().trim(),
+  body('address.street').optional().trim(),
+  body('address.city').optional().trim(),
+  body('address.state').optional().trim(),
+  body('address.zipCode').optional().trim(),
+  body('address.country').optional().trim(),
+  body('preferences.newsletter').optional().isBoolean(),
+  body('preferences.notifications.email').optional().isBoolean(),
+  body('preferences.notifications.sms').optional().isBoolean()
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { firstName, lastName, email, phone, address, preferences } = req.body;
+    const userId = req.user._id;
+
+    // Check if email is being changed and if it's already taken
+    if (email && email !== req.user.email) {
+      const existingUser = await User.findOne({ email, _id: { $ne: userId } });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email is already taken by another user'
+        });
+      }
+    }
+
+    // Update user
+    const updateData = {};
+    if (firstName !== undefined) updateData.firstName = firstName;
+    if (lastName !== undefined) updateData.lastName = lastName;
+    if (email !== undefined) updateData.email = email;
+    if (phone !== undefined) updateData.phone = phone;
+    if (address !== undefined) updateData.address = address;
+    if (preferences !== undefined) updateData.preferences = preferences;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: {
+        user: user.toJSON()
+      }
+    });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error during profile update'
+    });
+  }
+});
+
 module.exports = router;

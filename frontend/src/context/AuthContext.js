@@ -71,11 +71,11 @@ export const AuthProvider = ({ children }) => {
       if (state.token) {
         try {
           const response = await authAPI.getMe();
-          if (response.success) {
+          if (response.data.success) {
             dispatch({
               type: 'AUTH_SUCCESS',
               payload: {
-                user: response.data.user,
+                user: response.data.data.user,
                 token: state.token,
               },
             });
@@ -99,19 +99,19 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'AUTH_START' });
     try {
       const response = await authAPI.login(email, password);
-      if (response.success) {
-        localStorage.setItem('token', response.data.token);
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.data.token);
         dispatch({
           type: 'AUTH_SUCCESS',
-          payload: response.data,
+          payload: response.data.data,
         });
         return { success: true };
       } else {
         dispatch({
           type: 'AUTH_FAILURE',
-          payload: response.message,
+          payload: response.data.message,
         });
-        return { success: false, message: response.message };
+        return { success: false, message: response.data.message };
       }
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed';
@@ -127,19 +127,19 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: 'AUTH_START' });
     try {
       const response = await authAPI.register(userData);
-      if (response.success) {
-        localStorage.setItem('token', response.data.token);
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.data.token);
         dispatch({
           type: 'AUTH_SUCCESS',
-          payload: response.data,
+          payload: response.data.data,
         });
         return { success: true };
       } else {
         dispatch({
           type: 'AUTH_FAILURE',
-          payload: response.message,
+          payload: response.data.message,
         });
-        return { success: false, message: response.message };
+        return { success: false, message: response.data.message };
       }
     } catch (error) {
       const message = error.response?.data?.message || 'Registration failed';

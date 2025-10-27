@@ -43,6 +43,7 @@ export const authAPI = {
   getMe: () => api.get('/auth/me'),
   logout: () => api.post('/auth/logout'),
   refreshToken: () => api.post('/auth/refresh'),
+  updateProfile: (userData) => api.put('/auth/profile', userData),
 };
 
 // Products API
@@ -65,12 +66,18 @@ export const categoriesAPI = {
   deleteCategory: (id) => api.delete(`/categories/${id}`),
 };
 
-// Users API
-export const usersAPI = {
-  getUsers: () => api.get('/users'),
-  getUser: (id) => api.get(`/users/${id}`),
-  updateUser: (id, userData) => api.put(`/users/${id}`, userData),
-  deleteUser: (id) => api.delete(`/users/${id}`),
+// Orders API
+export const ordersAPI = {
+  createOrder: (orderData) => api.post('/orders', orderData),
+  getOrders: (params = {}) => api.get('/orders', { params }),
+  getOrder: (id, email = null) => {
+    const params = email ? { email } : {};
+    return api.get(`/orders/${id}`, { params });
+  },
+  updateOrderStatus: (id, statusData) => api.put(`/orders/${id}/status`, statusData),
+  updatePaymentStatus: (id, paymentData) => api.put(`/orders/${id}/payment`, paymentData),
+  cancelOrder: (id) => api.delete(`/orders/${id}`),
+  getAllOrders: (params = {}) => api.get('/orders/admin/all', { params }),
 };
 
 export default api;

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FiFacebook, FiTwitter, FiInstagram, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 
 const Footer = () => {
   return (
@@ -10,21 +9,10 @@ const Footer = () => {
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-lg font-light text-black mb-6 tracking-wide">WebStore</h3>
-            <p className="text-sm text-primary-600 font-light leading-relaxed mb-8 max-w-md">
+            <p className="text-sm text-primary-600 font-light leading-relaxed max-w-md">
               Curated products with exceptional quality and design. 
               Committed to providing excellent service and thoughtful curation.
             </p>
-            <div className="flex space-x-6">
-              <a href="#" className="text-primary-400 hover:text-black transition-colors">
-                <FiFacebook className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-primary-400 hover:text-black transition-colors">
-                <FiTwitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-primary-400 hover:text-black transition-colors">
-                <FiInstagram className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
           {/* Quick Links */}
