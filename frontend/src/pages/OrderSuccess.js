@@ -41,7 +41,11 @@ const OrderSuccess = () => {
             Thank you for your purchase. Your order has been successfully placed.
           </p>
           <p className="text-sm text-primary-600">
-            Order #{orderData.orderNumber} • {orderData.orderDate} at {orderData.orderTime}
+            Order #{orderData.orderNumber} • Placed on {new Date(orderData.createdAt).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })}
           </p>
         </div>
 
@@ -56,7 +60,13 @@ const OrderSuccess = () => {
               </div>
               <div className="text-right">
                 <p className="text-sm text-primary-600">Order Date</p>
-                <p className="font-medium text-black">{orderData.orderDate}</p>
+                <p className="font-medium text-black">
+                  {new Date(orderData.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
               </div>
             </div>
           </div>
@@ -168,7 +178,7 @@ const OrderSuccess = () => {
                 Your order will be shipped within 1-2 business days.
               </p>
               <p className="text-primary-600 font-light">
-                <strong>Estimated delivery:</strong> {orderData.estimatedDelivery}
+                <strong>Estimated delivery:</strong> 3-5 business days
               </p>
             </div>
           </div>

@@ -80,4 +80,14 @@ export const ordersAPI = {
   getAllOrders: (params = {}) => api.get('/orders/admin/all', { params }),
 };
 
+// Users API (Admin only)
+export const usersAPI = {
+  getUsers: (params = {}) => api.get('/users', { params }),
+  getUser: (id) => api.get(`/users/${id}`),
+  createUser: (userData) => api.post('/users', userData),
+  updateUser: (id, userData) => api.put(`/users/${id}`, userData),
+  deleteUser: (id) => api.delete(`/users/${id}`),
+  updateUserRole: (id, role) => api.put(`/users/${id}/role`, { role }),
+};
+
 export default api;
