@@ -4,6 +4,8 @@ const { randomUUID } = require('crypto');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 require('dotenv').config();
 
 const app = express();
@@ -65,6 +67,49 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/webstore'
   console.error('❌ MongoDB connection error:', error);
   process.exit(1);
 });
+
+// Swagger configuration
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'WebStore API',
+      version: '1.0.0',
+      description: 'RESTful API for WebStore e-commerce platform',
+      contact: {
+        name: 'API Support'
+      }
+    },
+    servers: [
+      {
+        url: 'https://web-store-project.onrender.com/api',
+        description: 'Production server'
+      },
+      {
+        url: 'http://localhost:5001/api',
+        description: 'Development server'
+      }
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
+    }
+  },
+  apis: ['./src/routes/*.js', './src/app.js']
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+// Swagger UI endpoint
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'WebStore API Documentation'
+}));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));

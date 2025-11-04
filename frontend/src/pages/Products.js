@@ -17,18 +17,27 @@ const Products = () => {
   const maxPrice = searchParams.get('maxPrice') || '';
   const sort = searchParams.get('sort') || 'newest';
 
+  // Only include price filters if they have valid values
+  const queryParams = {
+    page,
+    search,
+    category,
+    featured,
+    sort,
+    limit: 12,
+  };
+  
+  // Only add price filters if they have values
+  if (minPrice && minPrice.trim() !== '') {
+    queryParams.minPrice = minPrice;
+  }
+  if (maxPrice && maxPrice.trim() !== '') {
+    queryParams.maxPrice = maxPrice;
+  }
+
   const { data, isLoading, error } = useQuery(
     ['products', { page, search, category, featured, minPrice, maxPrice, sort }],
-    () => productsAPI.getProducts({
-      page,
-      search,
-      category,
-      featured,
-      minPrice,
-      maxPrice,
-      sort,
-      limit: 12,
-    }).then(res => res.data),
+    () => productsAPI.getProducts(queryParams).then(res => res.data),
     {
       keepPreviousData: true,
     }
@@ -126,15 +135,25 @@ const Products = () => {
                   <input
                     type="number"
                     placeholder="Min"
+                    min="0"
+                    step="0.01"
                     value={minPrice}
-                    onChange={(e) => handleFilterChange('minPrice', e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      handleFilterChange('minPrice', value === '' ? '' : value);
+                    }}
                     className="px-3 py-2 text-sm border-0 border-b border-primary-300 focus:border-black focus:outline-none bg-transparent placeholder-primary-400 font-light"
                   />
                   <input
                     type="number"
                     placeholder="Max"
+                    min="0"
+                    step="0.01"
                     value={maxPrice}
-                    onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      handleFilterChange('maxPrice', value === '' ? '' : value);
+                    }}
                     className="px-3 py-2 text-sm border-0 border-b border-primary-300 focus:border-black focus:outline-none bg-transparent placeholder-primary-400 font-light"
                   />
                 </div>
@@ -154,7 +173,6 @@ const Products = () => {
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
                   <option value="name">Name: A to Z</option>
-                  <option value="rating">Highest Rated</option>
                 </select>
               </div>
 

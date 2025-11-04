@@ -6,6 +6,50 @@ const { authenticate, authorizeAdmin, optionalAuth } = require('../middleware/au
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /orders:
+ *   post:
+ *     summary: Create a new order
+ *     tags: [Orders]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - items
+ *               - shippingAddress
+ *               - payment
+ *             properties:
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     product:
+ *                       type: string
+ *                     quantity:
+ *                       type: integer
+ *               shippingAddress:
+ *                 type: object
+ *               payment:
+ *                 type: object
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Order created successfully
+ *       400:
+ *         description: Validation error
+ */
 // @route   POST /api/orders
 // @desc    Create new order
 // @access  Public (for guest orders) / Private (for logged-in users)

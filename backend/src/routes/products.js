@@ -6,6 +6,42 @@ const { authenticate, authorizeAdmin, optionalAuth } = require('../middleware/au
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /products:
+ *   get:
+ *     summary: Get all products with filtering and pagination
+ *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *         description: Items per page
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: Category ID
+ *       - in: query
+ *         name: featured
+ *         schema:
+ *           type: boolean
+ *         description: Filter featured products
+ *     responses:
+ *       200:
+ *         description: List of products
+ */
 // @route   GET /api/products
 // @desc    Get all products with filtering and pagination
 // @access  Public
@@ -26,14 +62,39 @@ router.get('/', optionalAuth, async (req, res) => {
       filter.featured = true;
     }
     
+    // Price range filtering
     if (req.query.minPrice || req.query.maxPrice) {
       filter.price = {};
-      if (req.query.minPrice) filter.price.$gte = parseFloat(req.query.minPrice);
-      if (req.query.maxPrice) filter.price.$lte = parseFloat(req.query.maxPrice);
+      if (req.query.minPrice) {
+        const minPrice = parseFloat(req.query.minPrice);
+        if (!isNaN(minPrice) && minPrice >= 0) {
+          filter.price.$gte = minPrice;
+        }
+      }
+      if (req.query.maxPrice) {
+        const maxPrice = parseFloat(req.query.maxPrice);
+        if (!isNaN(maxPrice) && maxPrice >= 0) {
+          filter.price.$lte = maxPrice;
+        }
+      }
+      // Remove price filter if it's empty or invalid
+      if (Object.keys(filter.price).length === 0) {
+        delete filter.price;
+      }
     }
     
+    // Search functionality - use regex search (more reliable than text index)
     if (req.query.search) {
-      filter.$text = { $search: req.query.search };
+      const searchTerm = req.query.search.trim();
+      if (searchTerm) {
+        // Use regex search for better compatibility
+        filter.$or = [
+          { name: { $regex: searchTerm, $options: 'i' } },
+          { description: { $regex: searchTerm, $options: 'i' } },
+          { shortDescription: { $regex: searchTerm, $options: 'i' } },
+          { tags: { $in: [new RegExp(searchTerm, 'i')] } }
+        ];
+      }
     }
     
     if (req.query.tags) {
@@ -52,9 +113,6 @@ router.get('/', optionalAuth, async (req, res) => {
           break;
         case 'name':
           sort = { name: 1 };
-          break;
-        case 'rating':
-          sort = { 'ratings.average': -1 };
           break;
         case 'newest':
           sort = { createdAt: -1 };
