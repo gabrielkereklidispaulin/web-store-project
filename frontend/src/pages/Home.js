@@ -57,7 +57,7 @@ const Home = () => {
               </Link>
               <Link
                 to="/products?featured=true"
-                className="text-sm font-light text-primary-600 hover:text-black transition-colors duration-200"
+                className="text-sm font-light text-black border border-black px-8 py-4 hover:bg-black hover:text-white transition-colors duration-200"
               >
                 Featured Products
               </Link>
